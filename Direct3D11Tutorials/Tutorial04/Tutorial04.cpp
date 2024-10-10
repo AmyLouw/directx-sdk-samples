@@ -429,23 +429,23 @@ HRESULT InitDevice()
     // Create index buffer
     WORD indices[] =
     {
-        3,1,0,
-        2,1,3,
+        //3,1,0,
+        //2,1,3,
 
-        0,5,4,
+        //0,5,4,
         1,5,0,
 
-        3,4,7,
-        0,4,3,
+        //3,4,7,
+        //0,4,3,
 
-        1,6,5,
-        2,6,1,
+        //1,6,5,
+        //2,6,1,
 
-        2,7,6,
-        3,7,2,
+          2,7,6,
+        //3,7,2,
 
-        6,4,5,
-        7,4,6,
+        //6,4,5,
+        //7,4,6,
     };
 
     /*WORD indices[] =
@@ -478,7 +478,7 @@ HRESULT InitDevice()
     g_pImmediateContext->IASetIndexBuffer( g_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0 );
 
     // Set primitive topology
-    g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
+    g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
 	// Create the constant buffer
 	bd.Usage = D3D11_USAGE_DEFAULT;
@@ -506,7 +506,7 @@ HRESULT InitDevice()
 
     D3D11_RASTERIZER_DESC rasterDesc;
     rasterDesc.CullMode = D3D11_CULL_NONE;
-    rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+    rasterDesc.FillMode = D3D11_FILL_SOLID;
     rasterDesc.ScissorEnable = false;
     rasterDesc.DepthBias = 0;
     rasterDesc.DepthBiasClamp = 0.0f;
@@ -598,7 +598,7 @@ void Render()
     //
     // Animate the cube
     //
-	g_World = XMMatrixRotationY( t );
+	g_World = XMMatrixRotationY( 0.8 );
 
     //
     // Clear the back buffer
@@ -623,7 +623,7 @@ void Render()
 	g_pImmediateContext->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 
 
-    g_World *= XMMatrixTranslation(0.0f, 2.0f, 3.0f);
+    /*g_World *= XMMatrixTranslation(0.0f, 2.0f, 3.0f);
     cb.mWorld = XMMatrixTranspose(g_World);
 
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, 0, 0);
@@ -633,7 +633,7 @@ void Render()
     cb.mWorld = XMMatrixTranspose(g_World);
 
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, 0, 0);
-    g_pImmediateContext->DrawIndexed(36, 0, 0);
+    g_pImmediateContext->DrawIndexed(36, 0, 0);*/
     //
     // Present our back buffer to our front buffer
     //
