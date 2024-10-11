@@ -427,7 +427,7 @@ HRESULT InitDevice()
     g_pImmediateContext->IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offset );
 
     // Create index buffer
-    /*WORD indices[] =
+    WORD indices[] =
     {
         3,1,0,
         2,1,3,
@@ -446,7 +446,7 @@ HRESULT InitDevice()
 
         6,4,5,
         7,4,6,
-    };*/
+    };
 
     //four walls
    /* WORD indices[] =
@@ -478,7 +478,7 @@ HRESULT InitDevice()
         2,7,6
     };*/
 
-    WORD indices[] =
+    /*WORD indices[] =
     {
         0,1,
         1,2,
@@ -492,9 +492,12 @@ HRESULT InitDevice()
         1,5,
         2,6,
         3,7
+    };*/
 
-    };
-
+    /*WORD indices[] =
+    {
+        0, 1, 2, 3, 4, 5, 6, 7, 0, 1
+    };*/
     bd.Usage = D3D11_USAGE_DEFAULT;
     bd.ByteWidth = sizeof( WORD ) * 36;        // 36 vertices needed for 12 triangles in a triangle list
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -508,7 +511,7 @@ HRESULT InitDevice()
     g_pImmediateContext->IASetIndexBuffer( g_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0 );
 
     // Set primitive topology
-    g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+    g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 
 	// Create the constant buffer
@@ -536,8 +539,8 @@ HRESULT InitDevice()
     ID3D11RasterizerState* m_rasterState = 0;
 
     D3D11_RASTERIZER_DESC rasterDesc;
-    rasterDesc.CullMode = D3D11_CULL_NONE;
-    rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
+    //rasterDesc.CullMode = D3D11_CULL_NONE;
+    rasterDesc.FillMode = D3D11_FILL_SOLID;
     rasterDesc.ScissorEnable = false;
     rasterDesc.DepthBias = 0;
     rasterDesc.DepthBiasClamp = 0.0f;
