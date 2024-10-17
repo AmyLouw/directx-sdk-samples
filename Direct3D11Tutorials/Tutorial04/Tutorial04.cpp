@@ -400,18 +400,27 @@ HRESULT InitDevice()
     // Create vertex buffer
     SimpleVertex vertices[] =
     {
-        { XMFLOAT3( -1.0f, 1.0f, -1.0f ), XMFLOAT4( 0.0f, 0.0f, 1.0f, 1.0f ) },
-        { XMFLOAT3( 1.0f, 1.0f, -1.0f ), XMFLOAT4( 0.0f, 1.0f, 0.0f, 1.0f ) },
-        { XMFLOAT3( 1.0f, 1.0f, 1.0f ), XMFLOAT4( 0.0f, 1.0f, 1.0f, 1.0f ) },
-        { XMFLOAT3( -1.0f, 1.0f, 1.0f ), XMFLOAT4( 1.0f, 0.0f, 0.0f, 1.0f ) },
-        { XMFLOAT3( -1.0f, -1.0f, -1.0f ), XMFLOAT4( 1.0f, 0.0f, 1.0f, 1.0f ) },
-        { XMFLOAT3( 1.0f, -1.0f, -1.0f ), XMFLOAT4( 1.0f, 1.0f, 0.0f, 1.0f ) },
-        { XMFLOAT3( 1.0f, -1.0f, 1.0f ), XMFLOAT4( 1.0f, 1.0f, 1.0f, 1.0f ) },
-        { XMFLOAT3( -1.0f, -1.0f, 1.0f ), XMFLOAT4( 0.0f, 0.0f, 0.0f, 1.0f ) },
+        // Lower Hexagon (z = 0, y = 0)
+            { XMFLOAT3(1.0f, 0.0f,  0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) }, // Vertex 0
+            { XMFLOAT3(0.5f, 0.0f,  0.866f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) }, // Vertex 1
+            { XMFLOAT3(-0.5f, 0.0f,  0.866f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }, // Vertex 2
+            { XMFLOAT3(-1.0f, 0.0f,  0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) }, // Vertex 3
+            { XMFLOAT3(-0.5f, 0.0f, -0.866f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) }, // Vertex 4
+            { XMFLOAT3(0.5f, 0.0f, -0.866f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) }, // Vertex 5
+            { XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }, // Center Vertex 6
+
+            // Upper Hexagon (z = 0, y = 2)
+            { XMFLOAT3(1.0f, 2.0f,  0.0f), XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f) }, // Vertex 7
+            { XMFLOAT3(0.5f, 2.0f,  0.866f), XMFLOAT4(0.5f, 1.0f, 0.5f, 1.0f) }, // Vertex 8
+            { XMFLOAT3(-0.5f, 2.0f,  0.866f), XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f) }, // Vertex 9
+            { XMFLOAT3(-1.0f, 2.0f,  0.0f), XMFLOAT4(1.0f, 1.0f, 0.5f, 1.0f) }, // Vertex 10
+            { XMFLOAT3(-0.5f, 2.0f, -0.866f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f) }, // Vertex 11
+            { XMFLOAT3(0.5f, 2.0f, -0.866f), XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f) }, // Vertex 12
+            { XMFLOAT3(0.0f, 2.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }  // Center Vertex 13
     };
     D3D11_BUFFER_DESC bd = {};
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof( SimpleVertex ) * 8;
+    bd.ByteWidth = sizeof( SimpleVertex ) * 14;
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 
@@ -427,7 +436,7 @@ HRESULT InitDevice()
     g_pImmediateContext->IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offset );
 
     // Create index buffer
-    WORD indices[] =
+    /*WORD indices[] =
     {
         3,1,0,
         2,1,3,
@@ -446,7 +455,7 @@ HRESULT InitDevice()
 
         6,4,5,
         7,4,6,
-    };
+    };*/
 
     //four walls
    /* WORD indices[] =
@@ -478,11 +487,11 @@ HRESULT InitDevice()
         2,7,6
     };*/
 
-    /*WORD indices[] =
-    {
-        0,1,
-        1,2,
-        2,3,
+    //WORD indices[] =
+    //{
+        //0,1,
+        //1,2,
+        /*2,3,
         3,0,
         4,5,
         5,6,
@@ -491,15 +500,22 @@ HRESULT InitDevice()
         0,4,
         1,5,
         2,6,
-        3,7
-    };*/
+        3,7*/
+    //};
 
+    //cube triangle strip indices
     /*WORD indices[] =
     {
-        0, 1, 2, 3, 4, 5, 6, 7, 0, 1
+        0, 4 , 1, 5, 2, 6, 3, 7, 0, 4, -1, 7, 4, 6, 5, -1, 0, 3, 2, 1
     };*/
+
+    WORD indices[] =
+    {
+        4,11,5,12,0,7,1,8,2,9,3,10,4,11,-1,3,2,6,1,0,-1,3,4,6,5,0,-1,10,9,13,8,7,-1,10,11,13,12,7,-1
+    };
+
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof( WORD ) * 36;        // 36 vertices needed for 12 triangles in a triangle list
+    bd.ByteWidth = sizeof( WORD ) * 72;        // 36 vertices needed for 12 triangles in a triangle list
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
     InitData.pSysMem = indices;
@@ -511,7 +527,7 @@ HRESULT InitDevice()
     g_pImmediateContext->IASetIndexBuffer( g_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0 );
 
     // Set primitive topology
-    g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 
 	// Create the constant buffer
@@ -539,8 +555,8 @@ HRESULT InitDevice()
     ID3D11RasterizerState* m_rasterState = 0;
 
     D3D11_RASTERIZER_DESC rasterDesc;
-    //rasterDesc.CullMode = D3D11_CULL_NONE;
-    rasterDesc.FillMode = D3D11_FILL_SOLID;
+    rasterDesc.CullMode = D3D11_CULL_NONE;
+    rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
     rasterDesc.ScissorEnable = false;
     rasterDesc.DepthBias = 0;
     rasterDesc.DepthBiasClamp = 0.0f;
@@ -632,7 +648,7 @@ void Render()
     //
     // Animate the cube
     //
-	g_World = XMMatrixRotationY( 0.8 );
+	g_World = XMMatrixRotationY( 0.5 );
 
     //
     // Clear the back buffer
@@ -654,14 +670,14 @@ void Render()
 	g_pImmediateContext->VSSetShader( g_pVertexShader, nullptr, 0 );
 	g_pImmediateContext->VSSetConstantBuffers( 0, 1, &g_pConstantBuffer );
 	g_pImmediateContext->PSSetShader( g_pPixelShader, nullptr, 0 );
-	g_pImmediateContext->DrawIndexed( 36, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
+	g_pImmediateContext->DrawIndexed( 72, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 
 
-    g_World *= XMMatrixTranslation(0.0f, 2.0f, 3.0f);
+   /* g_World *= XMMatrixTranslation(0.0f, 2.0f, 3.0f);
     cb.mWorld = XMMatrixTranspose(g_World);
 
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, 0, 0);
-    g_pImmediateContext->DrawIndexed(36, 0, 0);
+    g_pImmediateContext->DrawIndexed(36, 0, 0);*/
 
     /*
     g_World *= XMMatrixTranslation(-2.8f, 2.0f, 3.0f);
