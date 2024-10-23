@@ -19,6 +19,7 @@
 #include <directxmath.h>
 #include <directxcolors.h>
 #include "resource.h"
+#include <vector>
 
 using namespace DirectX;
 
@@ -398,25 +399,35 @@ HRESULT InitDevice()
         return hr;
 
     // Create vertex buffer
-    SimpleVertex vertices[] =
+    
+	std::vector<SimpleVertex> vertices;
     {
-        // Lower Hexagon (z = 0, y = 0)
-            { XMFLOAT3(1.0f, 0.0f,  0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) }, // Vertex 0
-            { XMFLOAT3(0.5f, 0.0f,  0.866f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) }, // Vertex 1
-            { XMFLOAT3(-0.5f, 0.0f,  0.866f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }, // Vertex 2
-            { XMFLOAT3(-1.0f, 0.0f,  0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) }, // Vertex 3
-            { XMFLOAT3(-0.5f, 0.0f, -0.866f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) }, // Vertex 4
-            { XMFLOAT3(0.5f, 0.0f, -0.866f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) }, // Vertex 5
-            { XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }, // Center Vertex 6
+        //// Lower Hexagon (z = 0, y = 0)
+        //    { XMFLOAT3(1.0f, 0.0f,  0.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) }, // Vertex 0
+        //    { XMFLOAT3(0.5f, 0.0f,  0.866f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) }, // Vertex 1
+        //    { XMFLOAT3(-0.5f, 0.0f,  0.866f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }, // Vertex 2
+        //    { XMFLOAT3(-1.0f, 0.0f,  0.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) }, // Vertex 3
+        //    { XMFLOAT3(-0.5f, 0.0f, -0.866f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) }, // Vertex 4
+        //    { XMFLOAT3(0.5f, 0.0f, -0.866f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) }, // Vertex 5
+        //    { XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }, // Center Vertex 6
 
-            // Upper Hexagon (z = 0, y = 2)
-            { XMFLOAT3(1.0f, 2.0f,  0.0f), XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f) }, // Vertex 7
-            { XMFLOAT3(0.5f, 2.0f,  0.866f), XMFLOAT4(0.5f, 1.0f, 0.5f, 1.0f) }, // Vertex 8
-            { XMFLOAT3(-0.5f, 2.0f,  0.866f), XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f) }, // Vertex 9
-            { XMFLOAT3(-1.0f, 2.0f,  0.0f), XMFLOAT4(1.0f, 1.0f, 0.5f, 1.0f) }, // Vertex 10
-            { XMFLOAT3(-0.5f, 2.0f, -0.866f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f) }, // Vertex 11
-            { XMFLOAT3(0.5f, 2.0f, -0.866f), XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f) }, // Vertex 12
-            { XMFLOAT3(0.0f, 2.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }  // Center Vertex 13
+        //    // Upper Hexagon (z = 0, y = 2)
+        //    { XMFLOAT3(1.0f, 2.0f,  0.0f), XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f) }, // Vertex 7
+        //    { XMFLOAT3(0.5f, 2.0f,  0.866f), XMFLOAT4(0.5f, 1.0f, 0.5f, 1.0f) }, // Vertex 8
+        //    { XMFLOAT3(-0.5f, 2.0f,  0.866f), XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f) }, // Vertex 9
+        //    { XMFLOAT3(-1.0f, 2.0f,  0.0f), XMFLOAT4(1.0f, 1.0f, 0.5f, 1.0f) }, // Vertex 10
+        //    { XMFLOAT3(-0.5f, 2.0f, -0.866f), XMFLOAT4(1.0f, 0.5f, 1.0f, 1.0f) }, // Vertex 11
+        //    { XMFLOAT3(0.5f, 2.0f, -0.866f), XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f) }, // Vertex 12
+        //    { XMFLOAT3(0.0f, 2.0f, 0.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }  // Center Vertex 13
+
+        for (double x = 0.0; x <= 2.0; x += 0.5)
+        {
+			for (double z = 0.0; z <= 2.0; z += 0.5)
+			{
+				vertices.push_back({ XMFLOAT3(x, 0.0f, z), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) });
+			}
+
+        }
     };
     D3D11_BUFFER_DESC bd = {};
     bd.Usage = D3D11_USAGE_DEFAULT;
@@ -425,7 +436,7 @@ HRESULT InitDevice()
 	bd.CPUAccessFlags = 0;
 
     D3D11_SUBRESOURCE_DATA InitData = {};
-    InitData.pSysMem = vertices;
+    InitData.pSysMem = vertices.data();
     hr = g_pd3dDevice->CreateBuffer( &bd, &InitData, &g_pVertexBuffer );
     if( FAILED( hr ) )
         return hr;
@@ -509,16 +520,29 @@ HRESULT InitDevice()
         0, 4 , 1, 5, 2, 6, 3, 7, 0, 4, -1, 7, 4, 6, 5, -1, 0, 3, 2, 1
     };*/
 
-    WORD indices[] =
+    //hexagon indices
+    /*WORD indices[] =
     {
         4,11,5,12,0,7,1,8,2,9,3,10,4,11,-1,3,2,6,1,0,-1,3,4,6,5,0,-1,10,9,13,8,7,-1,10,11,13,12,7,-1
-    };
+    };*/
+
+	std::vector<WORD> indices;
+    for (int i = 0; i <= 4; i++)
+    {
+		for (int j = 0; j <= 4; j++)
+		{
+			indices.push_back(i*4);
+			indices.push_back(i* 4 +5+ j);
+		}
+        indices.push_back(-1);
+        break;
+    }
 
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof( WORD ) * 72;        // 36 vertices needed for 12 triangles in a triangle list
+    bd.ByteWidth = sizeof( WORD ) * indices.size();        // 36 vertices needed for 12 triangles in a triangle list
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
-    InitData.pSysMem = indices;
+    InitData.pSysMem = indices.data();
     hr = g_pd3dDevice->CreateBuffer( &bd, &InitData, &g_pIndexBuffer );
     if( FAILED( hr ) )
         return hr;
@@ -543,7 +567,7 @@ HRESULT InitDevice()
 	g_World = XMMatrixIdentity();
 
     // Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet( 0.0f, 2.5f, -5.0f, 0.0f );
+	XMVECTOR Eye = XMVectorSet( 0.0f, 1.5f, -2.0f, 0.0f );
 	XMVECTOR At = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 	XMVECTOR Up = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 	g_View = XMMatrixLookAtLH( Eye, At, Up );
@@ -648,7 +672,7 @@ void Render()
     //
     // Animate the cube
     //
-	g_World = XMMatrixRotationY( 0.5 );
+	g_World = XMMatrixRotationY( 0.0 );
 
     //
     // Clear the back buffer
