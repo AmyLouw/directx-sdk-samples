@@ -458,7 +458,7 @@ HRESULT InitDevice()
     g_pImmediateContext->IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offset );
 
     // Create index buffer
-    /*WORD indices[] =
+    WORD indices[] =
     {
         3,1,0,
         2,1,3,
@@ -477,7 +477,7 @@ HRESULT InitDevice()
 
         6,4,5,
         7,4,6,
-    };*/
+    };
 
     //four walls
    /* WORD indices[] =
@@ -526,10 +526,10 @@ HRESULT InitDevice()
     //};
 
     //cube triangle strip indices
-    WORD indices[] =
+    /*WORD indices[] =
     {
         0, 4 , 1, 5, 2, 6, 3, 7, 0, 4, -1, 7, 4, 6, 5, -1, 0, 3, 2, 1,-1
-    };
+    };*/
 
     //hexagon indices
     /*WORD indices[] =
@@ -562,7 +562,7 @@ HRESULT InitDevice()
     g_pImmediateContext->IASetIndexBuffer( g_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0 );
 
     // Set primitive topology
-    g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+    g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 
 	// Create the constant buffer
@@ -591,7 +591,7 @@ HRESULT InitDevice()
     ID3D11RasterizerState* m_rasterState = 0;
 
     D3D11_RASTERIZER_DESC rasterDesc;
-    rasterDesc.CullMode = D3D11_CULL_NONE;
+    //rasterDesc.CullMode = D3D11_CULL_BACK;
     rasterDesc.FillMode = D3D11_FILL_SOLID;
     rasterDesc.ScissorEnable = false;
     rasterDesc.DepthBias = 0;
@@ -684,14 +684,14 @@ void Render()
     //
     // Animate the cube
     //
-	g_World = XMMatrixRotationY( t );
 
-    XMMATRIX mSpin = XMMatrixRotationZ(-t);
-    XMMATRIX mOrbit = XMMatrixRotationY(-t * 2.0f);
+	g_World = XMMatrixRotationY( t ); //rotation for the cube on the right
+
+    XMMATRIX mSpin = XMMatrixRotationY(-t * 5);
     XMMATRIX mTranslate = XMMatrixTranslation(-4.0f, 0.0f, 0.0f);
     XMMATRIX mScale = XMMatrixScaling(0.3f, 0.3f, 0.3f);
 
-    g_World1 = mScale * mSpin * mTranslate * mOrbit;
+    g_World1 = mScale * mSpin * mTranslate; //Rotation, scale and translation for the cube on the left
 
     //apply scaling
 	XMMATRIX mscale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
@@ -720,6 +720,7 @@ void Render()
 	g_pImmediateContext->DrawIndexed( 72, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 
 
+    //rendering the second cube
     ConstantBuffer cb2;
     cb2.mWorld = XMMatrixTranspose(g_World1);
     cb2.mView = XMMatrixTranspose(g_View);
