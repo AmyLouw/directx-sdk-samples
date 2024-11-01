@@ -64,6 +64,7 @@ ID3D11Buffer*           g_pIndexBuffer = nullptr;
 ID3D11Buffer*           g_pConstantBuffer = nullptr;
 XMMATRIX                g_World;
 XMMATRIX                g_World1;
+XMMATRIX                g_World2;
 XMMATRIX                g_View;
 XMMATRIX                g_Projection;
 
@@ -577,9 +578,10 @@ HRESULT InitDevice()
     // Initialize the world matrix
 	g_World = XMMatrixIdentity();
 	g_World1 = XMMatrixIdentity();
+	g_World2 = XMMatrixIdentity();
 
     // Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet( 0.0f, 2.5f, -5.0f, 0.0f );
+	XMVECTOR Eye = XMVectorSet( 0.0f, 7.0f, -8.0f, 0.0f );
 	XMVECTOR At = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 	XMVECTOR Up = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 	g_View = XMMatrixLookAtLH( Eye, At, Up );
@@ -685,17 +687,32 @@ void Render()
     // Animate the cube
     //
 
-	g_World = XMMatrixRotationY( t ); //rotation for the cube on the right
 
-    XMMATRIX mSpin = XMMatrixRotationY(-t * 5);
-    XMMATRIX mTranslate = XMMatrixTranslation(-4.0f, 0.0f, 0.0f);
-    XMMATRIX mScale = XMMatrixScaling(0.3f, 0.3f, 0.3f);
+    
+    
 
-    g_World1 = mScale * mSpin * mTranslate; //Rotation, scale and translation for the cube on the left
-
+    //THE SUN
+    
     //apply scaling
-	XMMATRIX mscale = XMMatrixScaling(1.0f, 1.0f, 1.0f);
-	g_World *= mscale;
+    g_World = XMMatrixRotationY(t*0.1); //rotation for the cube on the right
+	XMMATRIX mscale = XMMatrixScaling(2.0f, 2.0f, 2.0f);
+    g_World *= mscale; // Combine translation and orbit
+
+    //THE EARTH
+    XMMATRIX mSpin = XMMatrixRotationY(-t * 2);
+    XMMATRIX mTranslate = XMMatrixTranslation(-6.0f, 0.0f, 0.0f);
+    XMMATRIX mScale = XMMatrixScaling(0.3f, 0.3f, 0.3f);
+	XMMATRIX mOrbit = XMMatrixRotationY(t);
+
+    g_World1 = mScale * mSpin * mTranslate * mOrbit; //Rotation, scale and translation for the cube on the left
+
+	//THE MOON
+	XMMATRIX mMoonSpin = XMMatrixRotationY(-t * 8);
+	XMMATRIX mMoonTranslate = XMMatrixTranslation(-3.0f, 0.0f, 0.0f);
+	XMMATRIX mMoonScale = XMMatrixScaling(0.1f, 0.1f, 0.1f);
+	XMMATRIX mMoonOrbit = XMMatrixRotationY(t * 6);
+    
+	g_World2 = mMoonScale * mMoonSpin * mMoonTranslate * mMoonOrbit * g_World1; //Rotation, scale and translation for the cube on the left
 
     //
     // Clear the back buffer
@@ -712,7 +729,7 @@ void Render()
 	g_pImmediateContext->UpdateSubresource( g_pConstantBuffer, 0, nullptr, &cb, 0, 0 );
 
     //
-    // Renders a triangle
+    // Draws the sun
     //
 	g_pImmediateContext->VSSetShader( g_pVertexShader, nullptr, 0 );
 	g_pImmediateContext->VSSetConstantBuffers( 0, 1, &g_pConstantBuffer );
@@ -731,9 +748,17 @@ void Render()
     // Render the second cube
     //
     g_pImmediateContext->DrawIndexed(36, 0, 0);
+
+    ConstantBuffer cb3;
+	cb3.mWorld = XMMatrixTranspose(g_World2);
+	cb3.mView = XMMatrixTranspose(g_View);
+	cb3.mProjection = XMMatrixTranspose(g_Projection);
+	g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb3, 0, 0);
+
+	g_pImmediateContext->DrawIndexed(36, 0, 0);
     
 
-   /* g_World *= XMMatrixTranslation(0.0f, 2.0f, 3.0f);
+    /*g_World *= XMMatrixTranslation(0.0f, 2.0f, 3.0f);
     cb.mWorld = XMMatrixTranspose(g_World);
 
     g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb, 0, 0);
