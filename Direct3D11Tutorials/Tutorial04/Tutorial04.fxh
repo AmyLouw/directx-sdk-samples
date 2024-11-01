@@ -8,7 +8,8 @@
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer ConstantBuffer : register( b0 )
+
+cbuffer ConstantBuffer : register(b0)
 {
 	matrix World;
 	matrix View;
@@ -25,12 +26,34 @@ struct VS_OUTPUT
 //--------------------------------------------------------------------------------------
 // Vertex Shader
 //--------------------------------------------------------------------------------------
-VS_OUTPUT VS( float4 Pos : POSITION, float4 Color : COLOR )
+
+VS_OUTPUT VS(float4 Pos : POSITION, float4 Color : COLOR)
 {
     VS_OUTPUT output = (VS_OUTPUT)0;
     output.Pos = mul( Pos, World );
     output.Pos = mul( output.Pos, View );
     output.Pos = mul( output.Pos, Projection );
+    output.Color = Color;
+    return output;
+}
+
+VS_OUTPUT VS_main(float4 Pos : POSITION, float4 Color : COLOR)
+{
+    VS_OUTPUT output = (VS_OUTPUT)0;
+    float4x4 ScaleMatrix = float4x4(0.2, 0.0, 0.0, 0.0,
+        0.0, 0.3, 0.0, 0.0,
+        0.0, 0.0, 3.0, 0.0,
+        0.0, 0.0, 0.0, 1.0);
+    float angle = radians(45.0); //rotation angle
+    float4x4 RotationMatrix = float4x4(cos(angle), 0.0, sin(angle), 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        -sin(angle), 0.0, cos(angle), 0.0,
+        0.0, 0.0, 0.0, 1.0);
+    Pos = mul(Pos, ScaleMatrix);
+    Pos = mul(Pos, RotationMatrix);
+    output.Pos = mul(Pos, World);
+    output.Pos = mul(output.Pos, View);
+    output.Pos = mul(output.Pos, Projection);
     output.Color = Color;
     return output;
 }
@@ -65,7 +88,9 @@ VS_OUTPUT VS( float4 Pos : POSITION, float4 Color : COLOR )
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
-float4 PS( VS_OUTPUT input ) : SV_Target
+
+float4 PS(VS_OUTPUT input) : SV_Target
 {
     return input.Color;
 }
+

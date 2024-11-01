@@ -142,7 +142,7 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 
     // Create window
     g_hInst = hInstance;
-    RECT rc = { 0, 0, 800, 600 };
+    RECT rc = { 0, 0, 1920, 1080 };
     AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
     g_hWnd = CreateWindow( L"TutorialWindowClass", L"Direct3D 11 Tutorial 4: 3D Spaces",
                            WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
@@ -350,11 +350,19 @@ HRESULT InitDevice()
 
     // Compile the vertex shader
     ID3DBlob* pVSBlob = nullptr;
-    hr = CompileShaderFromFile( L"Tutorial04.fxh", "VS", "vs_4_0", &pVSBlob );
+    hr = CompileShaderFromFile( L"Tutorial04.fxh", "VS_main", "vs_4_0", &pVSBlob );
     if( FAILED( hr ) )
     {
         MessageBox( nullptr,
                     L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK );
+        return hr;
+    }
+
+    hr = CompileShaderFromFile(L"Tutorial04.fxh", "VS", "vs_4_0", &pVSBlob);
+    if (FAILED(hr))
+    {
+        MessageBox(nullptr,
+            L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK);
         return hr;
     }
 
@@ -738,24 +746,24 @@ void Render()
 
 
     //rendering the second cube
-    ConstantBuffer cb2;
-    cb2.mWorld = XMMatrixTranspose(g_World1);
-    cb2.mView = XMMatrixTranspose(g_View);
-    cb2.mProjection = XMMatrixTranspose(g_Projection);
-    g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb2, 0, 0);
+ //   ConstantBuffer cb2;
+ //   cb2.mWorld = XMMatrixTranspose(g_World1);
+ //   cb2.mView = XMMatrixTranspose(g_View);
+ //   cb2.mProjection = XMMatrixTranspose(g_Projection);
+ //   g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb2, 0, 0);
 
-    //
-    // Render the second cube
-    //
-    g_pImmediateContext->DrawIndexed(36, 0, 0);
+ //   //
+ //   // Render the second cube
+ //   //
+ //   g_pImmediateContext->DrawIndexed(36, 0, 0);
 
-    ConstantBuffer cb3;
-	cb3.mWorld = XMMatrixTranspose(g_World2);
-	cb3.mView = XMMatrixTranspose(g_View);
-	cb3.mProjection = XMMatrixTranspose(g_Projection);
-	g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb3, 0, 0);
+ //   ConstantBuffer cb3;
+	//cb3.mWorld = XMMatrixTranspose(g_World2);
+	//cb3.mView = XMMatrixTranspose(g_View);
+	//cb3.mProjection = XMMatrixTranspose(g_Projection);
+	//g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb3, 0, 0);
 
-	g_pImmediateContext->DrawIndexed(36, 0, 0);
+	//g_pImmediateContext->DrawIndexed(36, 0, 0);
     
 
     /*g_World *= XMMatrixTranslation(0.0f, 2.0f, 3.0f);

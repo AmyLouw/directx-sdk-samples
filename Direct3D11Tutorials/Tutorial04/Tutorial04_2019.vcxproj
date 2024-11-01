@@ -390,6 +390,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="VS2.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tutorial04.cpp" />
@@ -399,7 +400,9 @@
     <ResourceCompile Include="Tutorial04.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Tutorial04.fxh" />
+    <FxCompile Include="Tutorial04.fxh">
+      <FileType>Document</FileType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
