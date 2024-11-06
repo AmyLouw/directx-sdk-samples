@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tutorial05.cpp" />
+    <ClCompile Include="..\Tutorial07\DDSTextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
@@ -20,6 +21,7 @@
     <ResourceCompile Include="Tutorial05.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+    <ClInclude Include="..\Tutorial07\DDSTextureLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Tutorial05_PS.hlsl">
