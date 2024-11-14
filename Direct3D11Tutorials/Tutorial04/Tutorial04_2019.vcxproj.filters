@@ -28,11 +28,10 @@
     <FxCompile Include="Tutorial04_VS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="VS2.hlsl">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Tutorial04.fxh">
       <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Tutorial04.fxh">
-      <Filter>Shaders</Filter>
-    </FxCompile>
+    </None>
   </ItemGroup>
 </Project>
