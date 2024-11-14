@@ -57,6 +57,8 @@ IDXGISwapChain*         g_pSwapChain = nullptr;
 IDXGISwapChain1*        g_pSwapChain1 = nullptr;
 ID3D11RenderTargetView* g_pRenderTargetView = nullptr;
 ID3D11VertexShader*     g_pVertexShader = nullptr;
+ID3D11VertexShader*     g_pVertexShader1 = nullptr;
+ID3D11VertexShader*     g_pVertexShader2 = nullptr;
 ID3D11PixelShader*      g_pPixelShader = nullptr;
 ID3D11PixelShader*      g_pPixelShader1 = nullptr;
 ID3D11PixelShader*      g_pPixelShader2 = nullptr;
@@ -360,6 +362,24 @@ HRESULT InitDevice()
         return hr;
     }
 
+    ID3DBlob* pVSBlob1 = nullptr;
+    hr = CompileShaderFromFile(L"Tutorial04.fxh", "VS_main1", "vs_4_0", &pVSBlob1);
+    if (FAILED(hr))
+    {
+        MessageBox(nullptr,
+            L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK);
+        return hr;
+    }
+
+    ID3DBlob* pVSBlob2 = nullptr;
+    hr = CompileShaderFromFile(L"Tutorial04.fxh", "VS_main2", "vs_4_0", &pVSBlob2);
+    if (FAILED(hr))
+    {
+        MessageBox(nullptr,
+            L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK);
+        return hr;
+    }
+
 	// Create the vertex shader
 	hr = g_pd3dDevice->CreateVertexShader( pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, &g_pVertexShader );
 	if( FAILED( hr ) )
@@ -367,6 +387,20 @@ HRESULT InitDevice()
 		pVSBlob->Release();
         return hr;
 	}
+
+    hr = g_pd3dDevice->CreateVertexShader(pVSBlob1->GetBufferPointer(), pVSBlob1->GetBufferSize(), nullptr, &g_pVertexShader1);
+    if (FAILED(hr))
+    {
+        pVSBlob1->Release();
+        return hr;
+    }
+
+    hr = g_pd3dDevice->CreateVertexShader(pVSBlob2->GetBufferPointer(), pVSBlob2->GetBufferSize(), nullptr, &g_pVertexShader2);
+    if (FAILED(hr))
+    {
+        pVSBlob2->Release();
+        return hr;
+    }
 
     // Define the input layout
     D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -397,7 +431,7 @@ HRESULT InitDevice()
     }
 
     ID3DBlob* pPSBlob1 = nullptr;
-    hr = CompileShaderFromFile(L"Tutorial04.fxh", "PS", "ps_4_0", &pPSBlob1);
+    hr = CompileShaderFromFile(L"Tutorial04.fxh", "PS1", "ps_4_0", &pPSBlob1);
     if (FAILED(hr))
     {
         MessageBox(nullptr,
@@ -406,7 +440,7 @@ HRESULT InitDevice()
     }
 
     ID3DBlob* pPSBlob2 = nullptr;
-    hr = CompileShaderFromFile(L"Tutorial04.fxh", "PS", "ps_4_0", &pPSBlob2);
+    hr = CompileShaderFromFile(L"Tutorial04.fxh", "PS2", "ps_4_0", &pPSBlob2);
     if (FAILED(hr))
     {
         MessageBox(nullptr,
@@ -420,15 +454,17 @@ HRESULT InitDevice()
     if( FAILED( hr ) )
         return hr;
 
-    hr = g_pd3dDevice->CreatePixelShader(pPSBlob1->GetBufferPointer(), pPSBlob1->GetBufferSize(), nullptr, &g_pPixelShader2);
+    hr = g_pd3dDevice->CreatePixelShader(pPSBlob1->GetBufferPointer(), pPSBlob1->GetBufferSize(), nullptr, &g_pPixelShader1);
     pPSBlob1->Release();
     if (FAILED(hr))
         return hr;
-    
-    hr = g_pd3dDevice->CreatePixelShader(pPSBlob2->GetBufferPointer(), pPSBlob2->GetBufferSize(), nullptr, &g_pPixelShader1);
+
+    hr = g_pd3dDevice->CreatePixelShader(pPSBlob2->GetBufferPointer(), pPSBlob2->GetBufferSize(), nullptr, &g_pPixelShader2);
     pPSBlob2->Release();
     if (FAILED(hr))
         return hr;
+    
+   
 
 
     // Create vertex buffer
@@ -759,15 +795,22 @@ void Render()
 	cb.mProjection = XMMatrixTranspose( g_Projection );
 	g_pImmediateContext->UpdateSubresource( g_pConstantBuffer, 0, nullptr, &cb, 0, 0 );
 
-    //
-    // Draws the sun
-    //
+    
 	g_pImmediateContext->VSSetShader( g_pVertexShader, nullptr, 0 );
 	g_pImmediateContext->VSSetConstantBuffers( 0, 1, &g_pConstantBuffer );
 	g_pImmediateContext->PSSetShader( g_pPixelShader, nullptr, 0 );
 	g_pImmediateContext->DrawIndexed( 72, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 
+   /* g_pImmediateContext->VSSetShader(g_pVertexShader1, nullptr, 0);
+    g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
+    g_pImmediateContext->PSSetShader(g_pPixelShader1, nullptr, 0);
+    g_pImmediateContext->DrawIndexed(72, 0, 0);
 
+    g_pImmediateContext->VSSetShader(g_pVertexShader2, nullptr, 0);
+    g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
+    g_pImmediateContext->PSSetShader(g_pPixelShader2, nullptr, 0);
+    g_pImmediateContext->DrawIndexed(72, 0, 0);*/
+    
  //   //rendering the second cube
  //   ConstantBuffer cb2;
  //   cb2.mWorld = XMMatrixTranspose(g_World1);
