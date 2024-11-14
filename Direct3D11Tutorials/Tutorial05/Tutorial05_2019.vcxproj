@@ -392,11 +392,11 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DDSTextureLoader.cpp" />
+    <ClCompile Include="..\Tutorial07\DDSTextureLoader.cpp" />
     <ClCompile Include="Tutorial05.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DDSTextureLoader.h" />
+    <ClInclude Include="..\Tutorial07\DDSTextureLoader.h" />
     <CLInclude Include="resource.h" />
     <ResourceCompile Include="Tutorial05.rc" />
   </ItemGroup>

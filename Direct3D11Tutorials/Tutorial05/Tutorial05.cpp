@@ -19,7 +19,7 @@
 #include <directxmath.h>
 #include <directxcolors.h>
 #include "resource.h"
-#include "DDSTextureLoader.h"
+#include "DSSTextureLoader.h"
 
 using namespace DirectX;
 
@@ -494,8 +494,6 @@ HRESULT InitDevice()
 
     // Set primitive topology
     g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-
-	hr = CreateDDSTextureFromFile(g_pd3dDevice, L"wood.dds", nullptr, &wood_TextureRV);
 
 	// Create the constant buffer
 	bd.Usage = D3D11_USAGE_DEFAULT;
