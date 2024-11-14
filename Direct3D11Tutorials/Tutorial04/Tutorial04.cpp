@@ -57,7 +57,6 @@ IDXGISwapChain*         g_pSwapChain = nullptr;
 IDXGISwapChain1*        g_pSwapChain1 = nullptr;
 ID3D11RenderTargetView* g_pRenderTargetView = nullptr;
 ID3D11VertexShader*     g_pVertexShader = nullptr;
-ID3D11VertexShader*     g_pVertexShader1 = nullptr;
 ID3D11PixelShader*      g_pPixelShader = nullptr;
 ID3D11InputLayout*      g_pVertexLayout = nullptr;
 ID3D11Buffer*           g_pVertexBuffer = nullptr;
@@ -368,13 +367,12 @@ HRESULT InitDevice()
     }
 
 	// Create the vertex shader
-	hr = g_pd3dDevice->CreateVertexShader( pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, &g_pVertexShader1 );
+	hr = g_pd3dDevice->CreateVertexShader( pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, &g_pVertexShader );
 	if( FAILED( hr ) )
 	{	
 		pVSBlob->Release();
         return hr;
 	}
-
 
     // Define the input layout
     D3D11_INPUT_ELEMENT_DESC layout[] =
@@ -632,7 +630,6 @@ void CleanupDevice()
     if( g_pIndexBuffer ) g_pIndexBuffer->Release();
     if( g_pVertexLayout ) g_pVertexLayout->Release();
     if( g_pVertexShader ) g_pVertexShader->Release();
-	if (g_pVertexShader1) g_pVertexShader1->Release();
     if( g_pPixelShader ) g_pPixelShader->Release();
     if( g_pRenderTargetView ) g_pRenderTargetView->Release();
     if( g_pSwapChain1 ) g_pSwapChain1->Release();
@@ -742,7 +739,7 @@ void Render()
     //
     // Draws the sun
     //
-	g_pImmediateContext->VSSetShader( g_pVertexShader1, nullptr, 0 );
+	g_pImmediateContext->VSSetShader( g_pVertexShader, nullptr, 0 );
 	g_pImmediateContext->VSSetConstantBuffers( 0, 1, &g_pConstantBuffer );
 	g_pImmediateContext->PSSetShader( g_pPixelShader, nullptr, 0 );
 	g_pImmediateContext->DrawIndexed( 72, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
