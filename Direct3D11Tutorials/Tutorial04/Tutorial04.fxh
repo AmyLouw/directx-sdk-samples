@@ -35,32 +35,30 @@ VS_OUTPUT VS( float4 Pos : POSITION, float4 Color : COLOR )
     return output;
 }
 
-//--------------------------------------------------------------------------------------
-// Vertex Shader
-//--------------------------------------------------------------------------------------
-//VS_OUTPUT VS(float4 Pos : POSITION, float4 Color : COLOR)  
-//{  
-    //VS_OUTPUT output = (VS_OUTPUT)0;  
-    //float4x4 ScaleMatrix = float4x4(0.2, 0.0, 0.0, 0.0,  
-                                    //0.0, 3.0, 0.0, 0.0,  
-                                    //0.0, 0.0, 3.0, 0.0,  
-                                    //0.0, 0.0, 0.0, 1.0);  
-                                    
-    //float angle = radians(45.0); // Example rotation angle  
-    //float4x4 RotationMatrix = float4x4(cos(angle), 0.0, sin(angle), 0.0,  
-                                      //0.0, 1.0, 0.0, 0.0,  
-                                       //-sin(angle), 0.0, cos(angle), 0.0,  
-                                       //0.0, 0.0, 0.0, 1.0);  
-                                       
-    //Pos = mul(Pos, ScaleMatrix);  
-    //Pos = mul(Pos, RotationMatrix);  
-    //float4 inPos = Pos;
-    //output.Pos = mul(output.Pos, View);  
-    //output.Pos = mul(output.Pos, Projection);  
-    //output.Color = Color;  
-    //return output;  
-//}
+VS_OUTPUT VS_main(float4 Pos : POSITION, float4 Color : COLOR)
+{
+    float pi = 3.14f / 2;
+    VS_OUTPUT output = (VS_OUTPUT)0;
+    float3 translation = float3(1.0f, 0.3f, 1.0f);
+    float3 scale = float3(0.2f, 3.0f, 3.0f);
+    float4x4 rotation = float4x4(
+        cos(pi), 0.0f, sin(pi), 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        -sin(pi), 0.0f, cos(pi), 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    );
+    Pos.xyz += translation;
+    Pos.xyz *= scale;
+    Pos = mul(Pos, rotation);
 
+    output.Pos = mul(Pos, World);
+    output.Pos = mul(output.Pos, View);
+    output.Pos = mul(output.Pos, Projection);
+    
+    
+    output.Color = Color;
+    return output;
+}
 
 //--------------------------------------------------------------------------------------
 // Pixel Shader
@@ -69,3 +67,5 @@ float4 PS( VS_OUTPUT input ) : SV_Target
 {
     return input.Color;
 }
+
+

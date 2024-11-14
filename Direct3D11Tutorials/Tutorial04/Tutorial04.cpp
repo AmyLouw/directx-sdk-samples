@@ -58,6 +58,8 @@ IDXGISwapChain1*        g_pSwapChain1 = nullptr;
 ID3D11RenderTargetView* g_pRenderTargetView = nullptr;
 ID3D11VertexShader*     g_pVertexShader = nullptr;
 ID3D11PixelShader*      g_pPixelShader = nullptr;
+ID3D11PixelShader*      g_pPixelShader1 = nullptr;
+ID3D11PixelShader*      g_pPixelShader2 = nullptr;
 ID3D11InputLayout*      g_pVertexLayout = nullptr;
 ID3D11Buffer*           g_pVertexBuffer = nullptr;
 ID3D11Buffer*           g_pIndexBuffer = nullptr;
@@ -350,7 +352,7 @@ HRESULT InitDevice()
 
     // Compile the vertex shader
     ID3DBlob* pVSBlob = nullptr;
-    hr = CompileShaderFromFile( L"Tutorial04.fxh", "VS", "vs_4_0", &pVSBlob );
+    hr = CompileShaderFromFile( L"Tutorial04.fxh", "VS_main", "vs_4_0", &pVSBlob );
     if( FAILED( hr ) )
     {
         MessageBox( nullptr,
@@ -394,11 +396,40 @@ HRESULT InitDevice()
         return hr;
     }
 
+    ID3DBlob* pPSBlob1 = nullptr;
+    hr = CompileShaderFromFile(L"Tutorial04.fxh", "PS", "ps_4_0", &pPSBlob1);
+    if (FAILED(hr))
+    {
+        MessageBox(nullptr,
+            L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK);
+        return hr;
+    }
+
+    ID3DBlob* pPSBlob2 = nullptr;
+    hr = CompileShaderFromFile(L"Tutorial04.fxh", "PS", "ps_4_0", &pPSBlob2);
+    if (FAILED(hr))
+    {
+        MessageBox(nullptr,
+            L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK);
+        return hr;
+    }
+
 	// Create the pixel shader
 	hr = g_pd3dDevice->CreatePixelShader( pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &g_pPixelShader );
 	pPSBlob->Release();
     if( FAILED( hr ) )
         return hr;
+
+    hr = g_pd3dDevice->CreatePixelShader(pPSBlob1->GetBufferPointer(), pPSBlob1->GetBufferSize(), nullptr, &g_pPixelShader2);
+    pPSBlob1->Release();
+    if (FAILED(hr))
+        return hr;
+    
+    hr = g_pd3dDevice->CreatePixelShader(pPSBlob2->GetBufferPointer(), pPSBlob2->GetBufferSize(), nullptr, &g_pPixelShader1);
+    pPSBlob2->Release();
+    if (FAILED(hr))
+        return hr;
+
 
     // Create vertex buffer
     
@@ -694,25 +725,25 @@ void Render()
     //THE SUN
     
     //apply scaling
-    g_World = XMMatrixRotationY(t*0.1); //rotation for the cube on the right
-	XMMATRIX mscale = XMMatrixScaling(2.0f, 2.0f, 2.0f);
-    g_World *= mscale; // Combine translation and orbit
+    //g_World = XMMatrixRotationY( 0.5f); //rotation for the cube on the right
+	//XMMATRIX mscale = XMMatrixScaling(2.0f, 2.0f, 2.0f);
+    //g_World *= mscale; // Combine translation and orbit
 
-    //THE EARTH
-    XMMATRIX mSpin = XMMatrixRotationY(-t * 2);
-    XMMATRIX mTranslate = XMMatrixTranslation(-6.0f, 0.0f, 0.0f);
-    XMMATRIX mScale = XMMatrixScaling(0.3f, 0.3f, 0.3f);
-	XMMATRIX mOrbit = XMMatrixRotationY(t);
+ //   //THE EARTH
+ //   XMMATRIX mSpin = XMMatrixRotationY(-t * 2);
+ //   XMMATRIX mTranslate = XMMatrixTranslation(-6.0f, 0.0f, 0.0f);
+ //   XMMATRIX mScale = XMMatrixScaling(0.3f, 0.3f, 0.3f);
+	//XMMATRIX mOrbit = XMMatrixRotationY(t);
 
-    g_World1 = mScale * mSpin * mTranslate * mOrbit; //Rotation, scale and translation for the cube on the left
+ //   g_World1 = mScale * mSpin * mTranslate * mOrbit; //Rotation, scale and translation for the cube on the left
 
-	//THE MOON
-	XMMATRIX mMoonSpin = XMMatrixRotationY(-t * 8);
-	XMMATRIX mMoonTranslate = XMMatrixTranslation(-3.0f, 0.0f, 0.0f);
-	XMMATRIX mMoonScale = XMMatrixScaling(0.1f, 0.1f, 0.1f);
-	XMMATRIX mMoonOrbit = XMMatrixRotationY(t * 6);
-    
-	g_World2 = mMoonScale * mMoonSpin * mMoonTranslate * mMoonOrbit * g_World1; //Rotation, scale and translation for the cube on the left
+	////THE MOON
+	//XMMATRIX mMoonSpin = XMMatrixRotationY(-t * 8);
+	//XMMATRIX mMoonTranslate = XMMatrixTranslation(-3.0f, 0.0f, 0.0f);
+	//XMMATRIX mMoonScale = XMMatrixScaling(0.1f, 0.1f, 0.1f);
+	//XMMATRIX mMoonOrbit = XMMatrixRotationY(t * 6);
+ //   
+	//g_World2 = mMoonScale * mMoonSpin * mMoonTranslate * mMoonOrbit * g_World1; //Rotation, scale and translation for the cube on the left
 
     //
     // Clear the back buffer
@@ -737,25 +768,25 @@ void Render()
 	g_pImmediateContext->DrawIndexed( 72, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 
 
-    //rendering the second cube
-    ConstantBuffer cb2;
-    cb2.mWorld = XMMatrixTranspose(g_World1);
-    cb2.mView = XMMatrixTranspose(g_View);
-    cb2.mProjection = XMMatrixTranspose(g_Projection);
-    g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb2, 0, 0);
+ //   //rendering the second cube
+ //   ConstantBuffer cb2;
+ //   cb2.mWorld = XMMatrixTranspose(g_World1);
+ //   cb2.mView = XMMatrixTranspose(g_View);
+ //   cb2.mProjection = XMMatrixTranspose(g_Projection);
+ //   g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb2, 0, 0);
 
-    //
-    // Render the second cube
-    //
-    g_pImmediateContext->DrawIndexed(36, 0, 0);
+ //   //
+ //   // Render the second cube
+ //   //
+ //   g_pImmediateContext->DrawIndexed(36, 0, 0);
 
-    ConstantBuffer cb3;
-	cb3.mWorld = XMMatrixTranspose(g_World2);
-	cb3.mView = XMMatrixTranspose(g_View);
-	cb3.mProjection = XMMatrixTranspose(g_Projection);
-	g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb3, 0, 0);
+ //   ConstantBuffer cb3;
+	//cb3.mWorld = XMMatrixTranspose(g_World2);
+	//cb3.mView = XMMatrixTranspose(g_View);
+	//cb3.mProjection = XMMatrixTranspose(g_Projection);
+	//g_pImmediateContext->UpdateSubresource(g_pConstantBuffer, 0, nullptr, &cb3, 0, 0);
 
-	g_pImmediateContext->DrawIndexed(36, 0, 0);
+	//g_pImmediateContext->DrawIndexed(36, 0, 0);
     
 
     /*g_World *= XMMatrixTranslation(0.0f, 2.0f, 3.0f);
