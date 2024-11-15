@@ -801,7 +801,7 @@ void Render()
 	g_pImmediateContext->PSSetShader( g_pPixelShader, nullptr, 0 );
 	g_pImmediateContext->DrawIndexed( 72, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 
-   /* g_pImmediateContext->VSSetShader(g_pVertexShader1, nullptr, 0);
+    g_pImmediateContext->VSSetShader(g_pVertexShader1, nullptr, 0);
     g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
     g_pImmediateContext->PSSetShader(g_pPixelShader1, nullptr, 0);
     g_pImmediateContext->DrawIndexed(72, 0, 0);
@@ -809,7 +809,7 @@ void Render()
     g_pImmediateContext->VSSetShader(g_pVertexShader2, nullptr, 0);
     g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
     g_pImmediateContext->PSSetShader(g_pPixelShader2, nullptr, 0);
-    g_pImmediateContext->DrawIndexed(72, 0, 0);*/
+    g_pImmediateContext->DrawIndexed(72, 0, 0);
     
  //   //rendering the second cube
  //   ConstantBuffer cb2;
