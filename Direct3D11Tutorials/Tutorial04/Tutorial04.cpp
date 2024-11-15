@@ -30,6 +30,7 @@ struct SimpleVertex
 {
     XMFLOAT3 Pos;
     XMFLOAT4 Color;
+    XMFLOAT3 Normal;
 };
 
 
@@ -38,6 +39,7 @@ struct ConstantBuffer
 	XMMATRIX mWorld;
 	XMMATRIX mView;
 	XMMATRIX mProjection;
+    XMMATRIX lightPos;
 };
 
 
@@ -66,11 +68,14 @@ ID3D11InputLayout*      g_pVertexLayout = nullptr;
 ID3D11Buffer*           g_pVertexBuffer = nullptr;
 ID3D11Buffer*           g_pIndexBuffer = nullptr;
 ID3D11Buffer*           g_pConstantBuffer = nullptr;
+ID3D11Texture2D*        g_pDepthStencil = nullptr;
+ID3D11DepthStencilView* g_pDepthStencilView = nullptr;
 XMMATRIX                g_World;
 XMMATRIX                g_World1;
 XMMATRIX                g_World2;
 XMMATRIX                g_View;
 XMMATRIX                g_Projection;
+XMMATRIX 			    g_lightPos;   
 
 
 //--------------------------------------------------------------------------------------
@@ -342,6 +347,21 @@ HRESULT InitDevice()
 
     g_pImmediateContext->OMSetRenderTargets( 1, &g_pRenderTargetView, nullptr );
 
+    D3D11_TEXTURE2D_DESC descDepth;
+	ZeroMemory(&descDepth, sizeof(descDepth));
+	descDepth.Width = width;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	hr = g_pd3dDevice->CreateTexture2D(&descDepth, nullptr, &g_pDepthStencil);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+	ZeroMemory(&descDSV, sizeof(descDSV));
+    descDSV.Format = descDepth.Format;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0;
+	hr = g_pd3dDevice->CreateDepthStencilView(g_pDepthStencil, &descDSV, &g_pDepthStencilView);
+
+	g_pImmediateContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
     // Setup the viewport
     D3D11_VIEWPORT vp;
     vp.Width = (FLOAT)width;
@@ -354,16 +374,16 @@ HRESULT InitDevice()
 
     // Compile the vertex shader
     ID3DBlob* pVSBlob = nullptr;
-    hr = CompileShaderFromFile( L"Tutorial04.fxh", "VS_main", "vs_4_0", &pVSBlob );
+    hr = CompileShaderFromFile( L"VS2.hlsl", "VS_main", "vs_4_0", &pVSBlob );
     if( FAILED( hr ) )
     {
         MessageBox( nullptr,
-                    L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.", L"Error", MB_OK );
+                    L"The FX file cannot be compiled.  Please run this executable from the directory that contains the FX file.???????", L"Error", MB_OK );
         return hr;
     }
 
     ID3DBlob* pVSBlob1 = nullptr;
-    hr = CompileShaderFromFile(L"Tutorial04.fxh", "VS_main1", "vs_4_0", &pVSBlob1);
+    hr = CompileShaderFromFile(L"VS3.hlsl", "VS_main", "vs_4_0", &pVSBlob1);
     if (FAILED(hr))
     {
         MessageBox(nullptr,
@@ -372,7 +392,7 @@ HRESULT InitDevice()
     }
 
     ID3DBlob* pVSBlob2 = nullptr;
-    hr = CompileShaderFromFile(L"Tutorial04.fxh", "VS_main2", "vs_4_0", &pVSBlob2);
+    hr = CompileShaderFromFile(L"VS4.hlsl", "VS_main", "vs_4_0", &pVSBlob2);
     if (FAILED(hr))
     {
         MessageBox(nullptr,
@@ -407,6 +427,7 @@ HRESULT InitDevice()
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	UINT numElements = ARRAYSIZE( layout );
 
@@ -422,7 +443,7 @@ HRESULT InitDevice()
 
 	// Compile the pixel shader
 	ID3DBlob* pPSBlob = nullptr;
-    hr = CompileShaderFromFile( L"Tutorial04.fxh", "PS", "ps_4_0", &pPSBlob );
+    hr = CompileShaderFromFile( L"PS2.hlsl", "PS_main", "ps_4_0", &pPSBlob );
     if( FAILED( hr ) )
     {
         MessageBox( nullptr,
@@ -431,7 +452,7 @@ HRESULT InitDevice()
     }
 
     ID3DBlob* pPSBlob1 = nullptr;
-    hr = CompileShaderFromFile(L"Tutorial04.fxh", "PS1", "ps_4_0", &pPSBlob1);
+    hr = CompileShaderFromFile(L"PS3.hlsl", "PS_main", "ps_4_0", &pPSBlob1);
     if (FAILED(hr))
     {
         MessageBox(nullptr,
@@ -440,7 +461,7 @@ HRESULT InitDevice()
     }
 
     ID3DBlob* pPSBlob2 = nullptr;
-    hr = CompileShaderFromFile(L"Tutorial04.fxh", "PS2", "ps_4_0", &pPSBlob2);
+    hr = CompileShaderFromFile(L"PS4.hlsl", "PS_main", "ps_4_0", &pPSBlob2);
     if (FAILED(hr))
     {
         MessageBox(nullptr,
@@ -498,14 +519,14 @@ HRESULT InitDevice()
 
         }*/
        
-            { XMFLOAT3(-1.0f,  1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) }, // Vertex 0
-            { XMFLOAT3( 1.0f,  1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) }, // Vertex 1
-            { XMFLOAT3( 1.0f,  1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) }, // Vertex 2
-            { XMFLOAT3(-1.0f,  1.0f,  1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) }, // Vertex 3
-            { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) }, // Vertex 4
-            { XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) }, // Vertex 5
-            { XMFLOAT3( 1.0f, -1.0f,  1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) }, // Vertex 6
-            { XMFLOAT3(-1.0f, -1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) }  // Vertex 7
+            { XMFLOAT3(-1.0f,  1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 0
+            { XMFLOAT3( 1.0f,  1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 1
+            { XMFLOAT3( 1.0f,  1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 2
+            { XMFLOAT3(-1.0f,  1.0f,  1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 3
+            { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 4
+            { XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 5
+            { XMFLOAT3( 1.0f, -1.0f,  1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 6
+            { XMFLOAT3(-1.0f, -1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}  // Vertex 7
         
     };
     D3D11_BUFFER_DESC bd = {};
@@ -648,19 +669,21 @@ HRESULT InitDevice()
 	g_World2 = XMMatrixIdentity();
 
     // Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet( 0.0f, 7.0f, -8.0f, 0.0f );
-	XMVECTOR At = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
+	XMVECTOR Eye = XMVectorSet( 0.0f, 0.5f, -1.5f, 0.0f );
+	XMVECTOR At = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
 	XMVECTOR Up = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
-	g_View = XMMatrixLookAtLH( Eye, At, Up );
+	g_View = XMMatrixLookAtLH( Eye, At, Up);
 
     // Initialize the projection matrix
 	g_Projection = XMMatrixPerspectiveFovLH( XM_PIDIV2, width / (FLOAT)height, 0.01f, 100.0f );
 
+	//Initialize the light position
+    g_lightPos = XMMatrixTranslation(0.0f, 0.0f, -5.0f);
 
     ID3D11RasterizerState* m_rasterState = 0;
 
     D3D11_RASTERIZER_DESC rasterDesc;
-    //rasterDesc.CullMode = D3D11_CULL_BACK;
+    rasterDesc.CullMode = D3D11_CULL_NONE;
     rasterDesc.FillMode = D3D11_FILL_SOLID;
     rasterDesc.ScissorEnable = false;
     rasterDesc.DepthBias = 0;
