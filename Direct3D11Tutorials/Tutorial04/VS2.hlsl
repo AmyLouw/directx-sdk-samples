@@ -18,6 +18,7 @@ struct VS_OUTPUT
 VS_OUTPUT VS_main(float4 Pos : POSITION, float4 Color : COLOR, float3 N : NORMAL)
 {
 
+    float pi = 3.14f / 2;
     VS_OUTPUT output = (VS_OUTPUT)0;
     float3 translation = float3(0.0f, 1.0f, 0.0);
     float3 scale = float3(1.5f, 1.5f, 1.5f);
