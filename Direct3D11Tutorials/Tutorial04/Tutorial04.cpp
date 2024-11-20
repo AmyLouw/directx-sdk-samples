@@ -39,7 +39,7 @@ struct ConstantBuffer
 	XMMATRIX mWorld;
 	XMMATRIX mView;
 	XMMATRIX mProjection;
-    XMMATRIX lightPos;
+    XMVECTOR lightPos;
 };
 
 
@@ -75,7 +75,7 @@ XMMATRIX                g_World1;
 XMMATRIX                g_World2;
 XMMATRIX                g_View;
 XMMATRIX                g_Projection;
-XMMATRIX 			    g_lightPos;   
+XMVECTOR			    g_lightPos;   
 
 
 //--------------------------------------------------------------------------------------
@@ -353,6 +353,18 @@ HRESULT InitDevice()
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	hr = g_pd3dDevice->CreateTexture2D(&descDepth, nullptr, &g_pDepthStencil);
 
+    descDepth.Height = height;
+    descDepth.MipLevels = 1;
+    descDepth.ArraySize = 1;
+    descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    descDepth.SampleDesc.Count = 1;
+    descDepth.SampleDesc.Quality = 0;
+    descDepth.Usage = D3D11_USAGE_DEFAULT;
+    descDepth.CPUAccessFlags = 0;
+    descDepth.MiscFlags = 0;
+    hr = g_pd3dDevice->CreateTexture2D(&descDepth, nullptr, &g_pDepthStencil);
+    if (FAILED(hr))
+        return hr;
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
 	ZeroMemory(&descDSV, sizeof(descDSV));
     descDSV.Format = descDepth.Format;
@@ -678,7 +690,7 @@ HRESULT InitDevice()
 	g_Projection = XMMatrixPerspectiveFovLH( XM_PIDIV2, width / (FLOAT)height, 0.01f, 100.0f );
 
 	//Initialize the light position
-    g_lightPos = XMMatrixTranslation(0.0f, 0.0f, -5.0f);
+    g_lightPos = XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f);
 
     ID3D11RasterizerState* m_rasterState = 0;
 

@@ -1,10 +1,9 @@
-
 cbuffer ConstantBuffer : register(b0)
 {
     matrix World;
     matrix View;
     matrix Projection;
-    matrix LightPos;
+    float4 LightPos; // Corrected variable name
 }
 
 //--------------------------------------------------------------------------------------
@@ -12,6 +11,7 @@ struct VS_OUTPUT
 {
     float4 Pos : SV_POSITION;
     float4 Color : COLOR0;
+    
 };
 
 
@@ -36,7 +36,7 @@ VS_OUTPUT VS_main(float4 Pos : POSITION, float4 Color : COLOR, float3 N : NORMAL
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
 
-    float3 lightDir = normalize(lightPos.xyz - Pos.xyz);
+    float3 lightDir = normalize(LightPos.xyz - Pos.xyz); // Corrected variable name
     float3 normal = normalize(N);
     float diff = max(0.0, dot(lightDir, normal));
     output.Color = (materialAmb + diff * materialDiff) * lightCol;
