@@ -530,15 +530,20 @@ HRESULT InitDevice()
 			}
 
         }*/
+
+        //add a bunch more indices
        
+        //top face
             { XMFLOAT3(-1.0f,  1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 0
             { XMFLOAT3( 1.0f,  1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 1
             { XMFLOAT3( 1.0f,  1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 2
             { XMFLOAT3(-1.0f,  1.0f,  1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 3
-            { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 4
-            { XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 5
+
+
+            { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(1.0f, 0.0f, 1.0f)}, // Vertex 4
+            { XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, 1.0f)}, // Vertex 5
             { XMFLOAT3( 1.0f, -1.0f,  1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 6
-            { XMFLOAT3(-1.0f, -1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}  // Vertex 7
+            { XMFLOAT3(-1.0f, -1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(1.0f, 1.0f, 0.0f)}  // Vertex 7
         
     };
     D3D11_BUFFER_DESC bd = {};
@@ -564,7 +569,7 @@ HRESULT InitDevice()
         3,1,0,
         2,1,3,
 
-        0,5,4,
+        /*0,5,4,
         1,5,0,
 
         3,4,7,
@@ -577,7 +582,7 @@ HRESULT InitDevice()
         3,7,2,
 
         6,4,5,
-        7,4,6,
+        7,4,6,*/
     };
 
     //four walls
@@ -828,6 +833,7 @@ void Render()
 	cb.mWorld = XMMatrixTranspose( g_World );
 	cb.mView = XMMatrixTranspose( g_View );
 	cb.mProjection = XMMatrixTranspose( g_Projection );
+	cb.lightPos = XMVectorSet(0.0f, 3.0f, 1.0f, 0.0f);
 	g_pImmediateContext->UpdateSubresource( g_pConstantBuffer, 0, nullptr, &cb, 0, 0 );
 
     
@@ -836,7 +842,7 @@ void Render()
 	g_pImmediateContext->PSSetShader( g_pPixelShader, nullptr, 0 );
 	g_pImmediateContext->DrawIndexed( 72, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 
-    g_pImmediateContext->VSSetShader(g_pVertexShader1, nullptr, 0);
+    /*g_pImmediateContext->VSSetShader(g_pVertexShader1, nullptr, 0);
     g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
     g_pImmediateContext->PSSetShader(g_pPixelShader1, nullptr, 0);
     g_pImmediateContext->DrawIndexed(72, 0, 0);
@@ -845,7 +851,7 @@ void Render()
     g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
     g_pImmediateContext->PSSetShader(g_pPixelShader2, nullptr, 0);
     g_pImmediateContext->DrawIndexed(72, 0, 0);
-    
+    */
  //   //rendering the second cube
  //   ConstantBuffer cb2;
  //   cb2.mWorld = XMMatrixTranspose(g_World1);
