@@ -28,7 +28,7 @@ VS_OUTPUT VS_main(float4 Pos : POSITION, float4 Color : COLOR, float3 N : NORMAL
     float4 materialAmb = float4(0.1, 0.2, 0.2, 1.0);
     float4 materialDiff = float4(0.9, 0.7, 1.0, 1.0);
     float4 lightCol = float4(1.0, 0.6, 0.8, 1.0);
-    float3 lightDir = normalize(LightPos.xyz - Pos.xyz); // Corrected variable name
+    float3 lightDir = normalize(LightPos.xyz - Pos.xyz); // Corrected variable name//float3(-2.0f, 12.0f, -10.0f)
     float3 normal = normalize(N);
     float diff = max(0.0, dot(lightDir, normal));
 
@@ -42,7 +42,7 @@ VS_OUTPUT VS_main(float4 Pos : POSITION, float4 Color : COLOR, float3 N : NORMAL
     output.Pos = mul(output.Pos, Projection);
 
     
-    output.Color = (materialAmb + diff * materialDiff) * lightCol;
+    output.Color = diff*float4(lightDir, 1);// (materialAmb + diff * materialDiff)* lightCol;
     output.PosWorld = Pos.xyz;
     output.Norm = N.xyz;
 

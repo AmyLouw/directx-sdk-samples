@@ -151,7 +151,7 @@ HRESULT InitWindow( HINSTANCE hInstance, int nCmdShow )
 
     // Create window
     g_hInst = hInstance;
-    RECT rc = { 0, 0, 800, 600 };
+    RECT rc = { 0, 0, 1920, 1080 };
     AdjustWindowRect( &rc, WS_OVERLAPPEDWINDOW, FALSE );
     g_hWnd = CreateWindow( L"TutorialWindowClass", L"Direct3D 11 Tutorial 4: 3D Spaces",
                            WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
@@ -539,16 +539,35 @@ HRESULT InitDevice()
             { XMFLOAT3( 1.0f,  1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 2
             { XMFLOAT3(-1.0f,  1.0f,  1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 3
 
+        //front face
+            { XMFLOAT3(-1.0f,  1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, -1.0f)}, //Vertex 4
+            { XMFLOAT3(1.0f,  1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, -1.0f)},  //Vertex 5
+            { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, -1.0f)}, // Vertex 6
+            { XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, -1.0f)}, // Vertex 7
 
-            { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(1.0f, 0.0f, 1.0f)}, // Vertex 4
-            { XMFLOAT3( 1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, 1.0f)}, // Vertex 5
-            { XMFLOAT3( 1.0f, -1.0f,  1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 1.0f, 0.0f)}, // Vertex 6
-            { XMFLOAT3(-1.0f, -1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(1.0f, 1.0f, 0.0f)}  // Vertex 7
-        
+        //left face
+            { XMFLOAT3(-1.0f,  1.0f,  1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) , XMFLOAT3(-1.0f, 0.0f, 0.0f)}, //Vertex 8
+            { XMFLOAT3(-1.0f,  1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(-1.0f, 0.0f, 0.0f)}, //Vertex 9
+            { XMFLOAT3(-1.0f, -1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(-1.0f, 0.0f, 0.0f)}, //Vertex 10
+            { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(-1.0f, 0.0f, 0.0f)}, // Vertex 11
+
+        //right face
+            { XMFLOAT3(1.0f,  1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f) , XMFLOAT3(-1.0f, 0.0f, 0.0f)}, //Vertex 12
+            { XMFLOAT3(1.0f,  1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(-1.0f, 0.0f, 0.0f)}, //Vertex 13
+            { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(-1.0f, 0.0f, 0.0f)}, // Vertex 14
+            { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(-1.0f, 0.0f, 0.0f)}, // Vertex 15
+
+        //back face
+            { XMFLOAT3(1.0f,  1.0f,1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, 1.0f)}, //Vertex 16
+            { XMFLOAT3(-1.0f, 1.0f,1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, 1.0f)}, //Vertex 17
+            { XMFLOAT3(1.0f, -1.0f,1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, 1.0f)}, //Vertex 18
+            { XMFLOAT3(-1.0f,-1.0f,1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, 1.0f)}, //Vertex 19
+
+    
     };
     D3D11_BUFFER_DESC bd = {};
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof( SimpleVertex ) * 14;
+    bd.ByteWidth = sizeof( SimpleVertex ) * 20;
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 
@@ -566,22 +585,28 @@ HRESULT InitDevice()
     // Create index buffer
     WORD indices[] =
     {
-        3,1,0,
-        2,1,3,
+        //top face
+        //3,1,0,
+        //2,1,3,
 
-        /*0,5,4,
-        1,5,0,
+        //////front face
+        //4,5,7,
+        //7,6,4,
 
-        3,4,7,
-        0,4,3,
+        ////////left face
+        //8,9,11,
+        //11,10,8,
 
-        1,6,5,
-        2,6,1,
+        //////right face
+        //12,13,15,
+        //15,14,12,
 
-        2,7,6,
-        3,7,2,
+        //back face
+        16,17,19,
+        19,18,16,
 
-        6,4,5,
+        //bottom face
+        /*6,4,5,
         7,4,6,*/
     };
 
@@ -656,7 +681,7 @@ HRESULT InitDevice()
     }*/
 
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof( WORD ) * 72;        // 36 vertices needed for 12 triangles in a triangle list
+    bd.ByteWidth = sizeof( WORD ) * 36;        // 36 vertices needed for 12 triangles in a triangle list
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
     InitData.pSysMem = indices;
@@ -695,12 +720,12 @@ HRESULT InitDevice()
 	g_Projection = XMMatrixPerspectiveFovLH( XM_PIDIV2, width / (FLOAT)height, 0.01f, 100.0f );
 
 	//Initialize the light position
-    g_lightPos = XMVectorSet(0.0f, 0.0f, -5.0f, 0.0f);
+    g_lightPos = XMVectorSet(-5.0f, 12.0f, -10.0f, 1.0f);
 
     ID3D11RasterizerState* m_rasterState = 0;
 
     D3D11_RASTERIZER_DESC rasterDesc;
-    rasterDesc.CullMode = D3D11_CULL_NONE;
+    //rasterDesc.CullMode = D3D11_CULL_BACK;
     rasterDesc.FillMode = D3D11_FILL_SOLID;
     rasterDesc.ScissorEnable = false;
     rasterDesc.DepthBias = 0;
@@ -833,7 +858,7 @@ void Render()
 	cb.mWorld = XMMatrixTranspose( g_World );
 	cb.mView = XMMatrixTranspose( g_View );
 	cb.mProjection = XMMatrixTranspose( g_Projection );
-	cb.lightPos = XMVectorSet(0.0f, 3.0f, 1.0f, 0.0f);
+	cb.lightPos = g_lightPos;
 	g_pImmediateContext->UpdateSubresource( g_pConstantBuffer, 0, nullptr, &cb, 0, 0 );
 
     
