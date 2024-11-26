@@ -586,28 +586,28 @@ HRESULT InitDevice()
     WORD indices[] =
     {
         //top face
-        //3,1,0,
-        //2,1,3,
+        3,1,0,
+        2,1,3,
 
-        //////front face
-        //4,5,7,
-        //7,6,4,
+        ////front face
+        4,5,7,
+        7,6,4,
 
-        ////////left face
-        //8,9,11,
-        //11,10,8,
+        //////left face
+        8,9,11,
+        11,10,8,
 
-        //////right face
-        //12,13,15,
-        //15,14,12,
+        ////right face
+        12,13,15,
+        15,14,12,
 
         //back face
         16,17,19,
         19,18,16,
 
         //bottom face
-        /*6,4,5,
-        7,4,6,*/
+        6,4,5,
+        7,4,6,
     };
 
     //four walls
@@ -867,7 +867,7 @@ void Render()
 	g_pImmediateContext->PSSetShader( g_pPixelShader, nullptr, 0 );
 	g_pImmediateContext->DrawIndexed( 72, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 
-    /*g_pImmediateContext->VSSetShader(g_pVertexShader1, nullptr, 0);
+    g_pImmediateContext->VSSetShader(g_pVertexShader1, nullptr, 0);
     g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
     g_pImmediateContext->PSSetShader(g_pPixelShader1, nullptr, 0);
     g_pImmediateContext->DrawIndexed(72, 0, 0);
@@ -876,7 +876,7 @@ void Render()
     g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
     g_pImmediateContext->PSSetShader(g_pPixelShader2, nullptr, 0);
     g_pImmediateContext->DrawIndexed(72, 0, 0);
-    */
+    
  //   //rendering the second cube
  //   ConstantBuffer cb2;
  //   cb2.mWorld = XMMatrixTranspose(g_World1);
