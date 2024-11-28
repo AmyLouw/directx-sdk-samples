@@ -40,6 +40,7 @@ struct ConstantBuffer
 	XMMATRIX mView;
 	XMMATRIX mProjection;
     XMVECTOR lightPos;
+    XMVECTOR cameraPos;
 };
 
 
@@ -345,8 +346,7 @@ HRESULT InitDevice()
     if( FAILED( hr ) )
         return hr;
 
-    g_pImmediateContext->OMSetRenderTargets( 1, &g_pRenderTargetView, nullptr );
-
+  
     D3D11_TEXTURE2D_DESC descDepth;
 	ZeroMemory(&descDepth, sizeof(descDepth));
 	descDepth.Width = width;
@@ -372,7 +372,11 @@ HRESULT InitDevice()
 	descDSV.Texture2D.MipSlice = 0;
 	hr = g_pd3dDevice->CreateDepthStencilView(g_pDepthStencil, &descDSV, &g_pDepthStencilView);
 
-	g_pImmediateContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_pDepthStencilView);
+
+	//
+    
+
 
     // Setup the viewport
     D3D11_VIEWPORT vp;
@@ -563,6 +567,13 @@ HRESULT InitDevice()
             { XMFLOAT3(1.0f, -1.0f,1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, 1.0f)}, //Vertex 18
             { XMFLOAT3(-1.0f,-1.0f,1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, 0.0f, 1.0f)}, //Vertex 19
 
+        //bottom face
+            { XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, -1.0f, 0.0f)}, // Vertex 20
+            { XMFLOAT3(-1.0f, -1.0f,  1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) , XMFLOAT3(0.0f, -1.0f, 0.0f)}, //Vertex 21
+            { XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, -1.0f, 0.0f)}, // Vertex 22
+            { XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f) , XMFLOAT3(0.0f, -1.0f, 0.0f)}, // Vertex 23
+
+
     
     };
     D3D11_BUFFER_DESC bd = {};
@@ -606,8 +617,8 @@ HRESULT InitDevice()
         19,18,16,
 
         //bottom face
-        6,4,5,
-        7,4,6,
+        20,21,23,
+        23,22,20,
     };
 
     //four walls
@@ -711,7 +722,7 @@ HRESULT InitDevice()
 	g_World2 = XMMatrixIdentity();
 
     // Initialize the view matrix
-	XMVECTOR Eye = XMVectorSet( 0.0f, 0.5f, -1.5f, 0.0f );
+	XMVECTOR Eye = XMVectorSet( -0.5f, 0.5f, -1.5f, 0.0f );
 	XMVECTOR At = XMVectorSet( 0.0f, 0.0f, 0.0f, 0.0f );
 	XMVECTOR Up = XMVectorSet( 0.0f, 1.0f, 0.0f, 0.0f );
 	g_View = XMMatrixLookAtLH( Eye, At, Up);
@@ -720,7 +731,7 @@ HRESULT InitDevice()
 	g_Projection = XMMatrixPerspectiveFovLH( XM_PIDIV2, width / (FLOAT)height, 0.01f, 100.0f );
 
 	//Initialize the light position
-    g_lightPos = XMVectorSet(-5.0f, 12.0f, -10.0f, 1.0f);
+    //g_lightPos = XMVectorSet(-2.0f, -5.0f, 0.0f, 1.0f);
 
     ID3D11RasterizerState* m_rasterState = 0;
 
@@ -858,16 +869,16 @@ void Render()
 	cb.mWorld = XMMatrixTranspose( g_World );
 	cb.mView = XMMatrixTranspose( g_View );
 	cb.mProjection = XMMatrixTranspose( g_Projection );
-	cb.lightPos = g_lightPos;
+	cb.lightPos = XMVectorSet(cos(t) * 3, 0.0f, sin(t) * 3, 1.0f);
 	g_pImmediateContext->UpdateSubresource( g_pConstantBuffer, 0, nullptr, &cb, 0, 0 );
-
     
 	g_pImmediateContext->VSSetShader( g_pVertexShader, nullptr, 0 );
 	g_pImmediateContext->VSSetConstantBuffers( 0, 1, &g_pConstantBuffer );
+    g_pImmediateContext->PSSetConstantBuffers(0, 1, &g_pConstantBuffer);
 	g_pImmediateContext->PSSetShader( g_pPixelShader, nullptr, 0 );
 	g_pImmediateContext->DrawIndexed( 72, 0, 0 );        // 36 vertices needed for 12 triangles in a triangle list
 
-    g_pImmediateContext->VSSetShader(g_pVertexShader1, nullptr, 0);
+   /* g_pImmediateContext->VSSetShader(g_pVertexShader1, nullptr, 0);
     g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
     g_pImmediateContext->PSSetShader(g_pPixelShader1, nullptr, 0);
     g_pImmediateContext->DrawIndexed(72, 0, 0);
@@ -875,7 +886,7 @@ void Render()
     g_pImmediateContext->VSSetShader(g_pVertexShader2, nullptr, 0);
     g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pConstantBuffer);
     g_pImmediateContext->PSSetShader(g_pPixelShader2, nullptr, 0);
-    g_pImmediateContext->DrawIndexed(72, 0, 0);
+    g_pImmediateContext->DrawIndexed(72, 0, 0);*/
     
  //   //rendering the second cube
  //   ConstantBuffer cb2;
@@ -913,6 +924,8 @@ void Render()
     //
     // Present our back buffer to our front buffer
     //
+    g_pImmediateContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
     g_pSwapChain->Present( 0, 0 );
 }
 
