@@ -869,7 +869,7 @@ void Render()
 	cb.mWorld = XMMatrixTranspose( g_World );
 	cb.mView = XMMatrixTranspose( g_View );
 	cb.mProjection = XMMatrixTranspose( g_Projection );
-	cb.lightPos = XMVectorSet(cos(t) * 3, 0.0f, sin(t) * 3, 1.0f);
+	cb.lightPos = XMVectorSet(cos(t) * 3, 2.0f, sin(t) * 3, 1.0f);
 	g_pImmediateContext->UpdateSubresource( g_pConstantBuffer, 0, nullptr, &cb, 0, 0 );
     
 	g_pImmediateContext->VSSetShader( g_pVertexShader, nullptr, 0 );
