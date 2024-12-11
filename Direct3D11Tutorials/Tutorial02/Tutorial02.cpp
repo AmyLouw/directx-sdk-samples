@@ -51,6 +51,7 @@ ID3D11InputLayout*      g_pVertexLayout = nullptr;
 ID3D11Buffer*           g_pVertexBuffer = nullptr;
 
 
+
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
@@ -382,33 +383,111 @@ HRESULT InitDevice()
         return hr;
 
     // Create vertex buffer
-    SimpleVertex vertices[] =
+    /*SimpleVertex vertices[] =
     {
         XMFLOAT3( 0.0f, 0.5f, 0.5f ),
         XMFLOAT3( 0.5f, -0.5f, 0.5f ),
         XMFLOAT3( -0.5f, -0.5f, 0.5f ),
-    };
+    };*/
+
+
+    // Create vertex buffer
+    const int gridSize = 10;
+    SimpleVertex vertices[gridSize * gridSize];
+    float step = 1.0f / (gridSize - 1);
+
+    for (int i = 0; i < gridSize; ++i)
+    {
+        for (int j = 0; j < gridSize; ++j)
+        {
+            vertices[i * gridSize + j].Pos = XMFLOAT3(j * step - 0.5f, i * step - 0.5f, 0.5f);
+        }
+    }
+
+
+    // Create index buffer
+    const int gridSize = 10;
+    const int numIndices = (gridSize - 1) * (gridSize - 1) * 6;
+    unsigned int indices[numIndices];
+    int index = 0;
+
+    for (int i = 0; i < gridSize - 1; ++i)
+    {
+        for (int j = 0; j < gridSize - 1; ++j)
+        {
+            int topLeft = i * gridSize + j;
+            int topRight = topLeft + 1;
+            int bottomLeft = topLeft + gridSize;
+            int bottomRight = bottomLeft + 1;
+
+            // First triangle
+            indices[index++] = topLeft;
+            indices[index++] = bottomLeft;
+            indices[index++] = topRight;
+
+            // Second triangle
+            indices[index++] = topRight;
+            indices[index++] = bottomLeft;
+            indices[index++] = bottomRight;
+        }
+    }
+
+    D3D11_BUFFER_DESC indexBufferDesc = {};
+    indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+    indexBufferDesc.ByteWidth = sizeof(indices);
+    indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    indexBufferDesc.CPUAccessFlags = 0;
+
+    D3D11_SUBRESOURCE_DATA indexInitData = {};
+    indexInitData.pSysMem = indices;
+    hr = g_pd3dDevice->CreateBuffer(&indexBufferDesc, &indexInitData, &g_pIndexBuffer);
+    if (FAILED(hr))
+        return hr;
+
+    // Set index buffer
+    g_pImmediateContext->IASetIndexBuffer(g_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
     D3D11_BUFFER_DESC bd = {};
     bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof( SimpleVertex ) * 3;
+    bd.ByteWidth = sizeof(vertices);
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
+    bd.CPUAccessFlags = 0;
 
     D3D11_SUBRESOURCE_DATA InitData = {};
     InitData.pSysMem = vertices;
-    hr = g_pd3dDevice->CreateBuffer( &bd, &InitData, &g_pVertexBuffer );
-    if( FAILED( hr ) )
+    hr = g_pd3dDevice->CreateBuffer(&bd, &InitData, &g_pVertexBuffer);
+    if (FAILED(hr))
         return hr;
 
     // Set vertex buffer
-    UINT stride = sizeof( SimpleVertex );
+    UINT stride = sizeof(SimpleVertex);
     UINT offset = 0;
-    g_pImmediateContext->IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offset );
+    g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pVertexBuffer, &stride, &offset);
 
     // Set primitive topology
-    g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+    g_pImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     return S_OK;
+ //   D3D11_BUFFER_DESC bd = {};
+ //   bd.Usage = D3D11_USAGE_DEFAULT;
+ //   bd.ByteWidth = sizeof( SimpleVertex ) * 3;
+ //   bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	//bd.CPUAccessFlags = 0;
+
+ //   D3D11_SUBRESOURCE_DATA InitData = {};
+ //   InitData.pSysMem = vertices;
+ //   hr = g_pd3dDevice->CreateBuffer( &bd, &InitData, &g_pVertexBuffer );
+ //   if( FAILED( hr ) )
+ //       return hr;
+
+ //   // Set vertex buffer
+ //   UINT stride = sizeof( SimpleVertex );
+ //   UINT offset = 0;
+ //   g_pImmediateContext->IASetVertexBuffers( 0, 1, &g_pVertexBuffer, &stride, &offset );
+
+ //   // Set primitive topology
+ //   g_pImmediateContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+
+ //   return S_OK;
 }
 
 
