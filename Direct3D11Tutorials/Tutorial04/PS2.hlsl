@@ -39,10 +39,5 @@ float4 PS_main(VS_OUTPUT input) : SV_Target
 
 	float4 color = SpecColor + ((materialAmb + diff * materialDiff) * lightCol);
 
-
-
-	
-	//return float4(debugColor, 1.0);
-
 	return color;
 }
